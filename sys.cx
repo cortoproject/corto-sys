@@ -1,0 +1,156 @@
+#package ::corto::sys
+
+int pid{width_64}
+
+// CPU information
+class CpuData::
+    user : uint64
+    sys : uint64
+    nice : uint64
+    idle : uint64
+    @wait : uint64
+    irq : uint64
+    soft_irq : uint64
+    stolen : uint64
+    total : uint64
+    
+// Cpu info
+class CpuInfo::
+    vendor : string
+    model : string
+    mhz : uint32
+    cache_size : uint64
+    total_sockets : uint32
+    total_cores : uint32
+    cores_per_socket : uint32       
+    
+// Memory information
+class MemoryData::
+    ram : uint64
+    total : uint64
+    used : uint64
+    free : uint64
+    actual_used : uint64
+    actual_free : uint64
+    used_percent : float64
+    free_percent : float64
+    
+// Swap information
+class SwapData::
+    total : uint64
+    used : uint64
+    free : uint64
+    page_in : uint64
+    page_out : uint64
+    
+// Uptime
+class UptimeData::
+    uptime : float64
+    
+// Load
+class LoadAvgData::
+    loadavg : array{float64,3}
+
+// Overall process statistics
+class ProcStatData::
+    total : uint64
+    sleeping : uint64
+    running : uint64
+    zombie : uint64
+    stopped : uint64
+    idle : uint64
+    threads : uint64
+    
+// Process memory statistics
+struct ProcMem::
+    size : uint64
+    resident : uint64
+    share : uint64
+    minor_faults : uint64
+    major_faults : uint64
+    page_faults : uint64
+    
+// Process time statistics
+struct ProcTime::
+    start_time : uint64
+    user : uint64
+    sys : uint64
+    total : uint64
+    
+// Process cpu statistics
+struct ProcCpu::
+    start_time : uint64
+    user : uint64
+    sys : uint64
+    total : uint64
+    last_time : uint64
+    percent : float64
+
+struct ProcExe::
+    name : string
+    cwd : string
+    root : string
+
+// Process statistics
+class Process::
+    pid : sys::pid
+    mem : ProcMem,local
+    time : ProcTime,local
+    cpu : ProcCpu,local
+    exe : ProcExe,local
+    
+// Filesystem statistics
+enum FileSystemType::
+    Unknown,
+    None,
+    LocalDisk,
+    Network,
+    RamDisk,
+    CdROM,
+    Swap,
+    Max
+    
+struct FileSystem::
+    dir_name : string
+    dev_name : string
+    type_name : string
+    sys_type_name : string
+    options : string
+    type : FileSystemType
+    flags : int32
+    
+// Statistics that can be enabled on a host
+bitmask Stats::
+    Cpu,
+    CpuList,
+    CpuInfo,
+    Mem,
+    Swap,
+    Uptime,
+    LoadAvg,
+    ProcList,
+    ProcStat,
+    ProcMem, // Requires ProcList
+    ProcTime, // Requires ProcList
+    ProcCpu, // Requires ProcList
+    ProcExe, // Requires ProcList
+    FileSystemList
+
+// Host class
+class Monitor::
+    stats : sys::Stats
+    cpu : CpuData, readonly
+    cpu_list : list{CpuData}, readonly
+    cpu_info : list{CpuInfo}, readonly
+    memory : MemoryData, readonly
+    swap : SwapData, readonly
+    uptime : sys::UptimeData, readonly
+    loadavg : sys::LoadAvgData, readonly
+    proc_list : list{Process}, readonly
+    proc_stat : ProcStatData, readonly
+    file_system_list : list{FileSystem}, readonly
+    handle : word, local | private
+    int16 construct()
+    void destruct()
+    void refresh()
+    
