@@ -49,6 +49,8 @@ Describes filesystem kind.
 ### Swap
 ### Unknown
 
+## gid
+
 ## LoadAvgData
 Displays average load over 1, 5 and 10 minutes.
 
@@ -136,6 +138,7 @@ Update members with the latest statistics.
 The `refresh` function will only update the members for which the corresponding
 bit is enabled in the `stats` member.
 
+### resource_limit
 ### stats
 A mask that determines which statistics should be retrieved when refresh() is
 called.
@@ -165,10 +168,17 @@ Process specific CPU data.
 ### total
 ### user
 
+## ProcCred
+### egid
+### euid
+### gid
+### uid
+
 ## Process
 Process data.
 
 ### cpu
+### cred
 ### exe
 ### mem
 ### pid
@@ -210,6 +220,28 @@ Statistics on how long a process has been running.
 ### total
 ### user
 
+## ResourceLimit
+### core_cur
+### core_max
+### cpu_cur
+### cpu_max
+### data_cur
+### data_max
+### file_size_cur
+### file_size_max
+### memory_cur
+### memory_max
+### open_files_cur
+### open_files_max
+### pipe_size_cur
+### pipe_size_max
+### processes_cur
+### processes_max
+### stack_cur
+### stack_max
+### virtual_memory_cur
+### virtual_memory_max
+
 ## Stats
 Bitmask that describes the statistics that can be retrieved by the Monitor class.
 
@@ -220,11 +252,13 @@ Bitmask that describes the statistics that can be retrieved by the Monitor class
 ### LoadAvg
 ### Mem
 ### ProcCpu
+### ProcCred
 ### ProcExe
 ### ProcList
 ### ProcMem
 ### ProcStat
 ### ProcTime
+### ResourceLimit
 ### Swap
 ### Uptime
 
@@ -236,6 +270,8 @@ Statistics on memory swapping.
 ### page_out
 ### total
 ### used
+
+## uid
 
 ## UptimeData
 How long the machine has been running.

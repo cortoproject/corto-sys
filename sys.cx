@@ -1,103 +1,145 @@
 #package ::corto::sys
 
-int pid{width_64}
+int pid{width_64} // Process id
+int uid{width_32} // User id
+int gid{width_32} // Group id
 
-// CPU information
+// CPU statistics
 class CpuData::
-    user : uint64
-    sys : uint64
-    nice : uint64
-    idle : uint64
-    @wait : uint64
-    irq : uint64
-    soft_irq : uint64
-    stolen : uint64
-    total : uint64
+    user: uint64
+    sys: uint64
+    nice: uint64
+    idle: uint64
+    @wait: uint64
+    irq: uint64
+    soft_irq: uint64
+    stolen: uint64
+    total: uint64
     
-// Cpu info
+// CPU info
 class CpuInfo::
-    vendor : string
-    model : string
-    mhz : uint32
-    cache_size : uint64
-    total_sockets : uint32
-    total_cores : uint32
-    cores_per_socket : uint32       
+    vendor: string
+    model: string
+    mhz: uint32
+    cache_size: uint64
+    total_sockets: uint32
+    total_cores: uint32
+    cores_per_socket: uint32       
     
 // Memory information
 class MemoryData::
-    ram : uint64
-    total : uint64
-    used : uint64
-    free : uint64
-    actual_used : uint64
-    actual_free : uint64
-    used_percent : float64
-    free_percent : float64
+    ram: uint64
+    total: uint64
+    used: uint64
+    free: uint64
+    actual_used: uint64
+    actual_free: uint64
+    used_percent: float64
+    free_percent: float64
     
 // Swap information
 class SwapData::
-    total : uint64
-    used : uint64
-    free : uint64
-    page_in : uint64
-    page_out : uint64
+    total: uint64
+    used: uint64
+    free: uint64
+    page_in: uint64
+    page_out: uint64
     
 // Uptime
 class UptimeData::
-    uptime : float64
+    uptime: float64
     
 // Load
 class LoadAvgData::
-    loadavg : array{float64,3}
+    loadavg: array{float64,3}
+
+// Resource limits
+class ResourceLimit::
+    cpu_cur, cpu_max: uint64
+    file_size_cur, file_size_max: uint64
+    pipe_size_cur, pipe_size_max: uint64
+    data_cur, data_max: uint64
+    stack_cur, stack_max: uint64
+    core_cur, core_max: uint64
+    memory_cur, memory_max: uint64
+    processes_cur, processes_max: uint64
+    open_files_cur, open_files_max: uint64
+    virtual_memory_cur, virtual_memory_max: uint64
 
 // Overall process statistics
 class ProcStatData::
-    total : uint64
-    sleeping : uint64
-    running : uint64
-    zombie : uint64
-    stopped : uint64
-    idle : uint64
-    threads : uint64
+    total: uint64
+    sleeping: uint64
+    running: uint64
+    zombie: uint64
+    stopped: uint64
+    idle: uint64
+    threads: uint64
     
 // Process memory statistics
-struct ProcMem::
-    size : uint64
-    resident : uint64
-    share : uint64
-    minor_faults : uint64
-    major_faults : uint64
-    page_faults : uint64
+class ProcMem::
+    size: uint64
+    resident: uint64
+    share: uint64
+    minor_faults: uint64
+    major_faults: uint64
+    page_faults: uint64
     
 // Process time statistics
-struct ProcTime::
-    start_time : uint64
-    user : uint64
-    sys : uint64
-    total : uint64
+class ProcTime::
+    start_time: uint64
+    user: uint64
+    sys: uint64
+    total: uint64
     
 // Process cpu statistics
-struct ProcCpu::
-    start_time : uint64
-    user : uint64
-    sys : uint64
-    total : uint64
-    last_time : uint64
-    percent : float64
+class ProcCpu::
+    start_time: uint64
+    user: uint64
+    sys: uint64
+    total: uint64
+    last_time: uint64
+    percent: float64
 
-struct ProcExe::
-    name : string
-    cwd : string
-    root : string
+// Process command statistics
+class ProcExe::
+    name: string
+    cwd: string
+    root: string
+
+// Process credential statistics
+class ProcCred::
+    uid: sys::uid
+    gid: sys::gid
+    euid: sys::uid
+    egid: sys::gid
+
+// Credential name information
+class ProcCredName::
+    user: string
+    group: string
+
+// Process state information
+class ProcState::
+    name: string
+    state: char
+    ppid: sys::pid
+    tty: int32
+    priority: int32
+    nice: int32
+    processor: int32
+    threads: uint64
 
 // Process statistics
 class Process::
-    pid : sys::pid
-    mem : ProcMem,local
-    time : ProcTime,local
-    cpu : ProcCpu,local
-    exe : ProcExe,local
+    pid: sys::pid
+    mem: ProcMem, hidden
+    time: ProcTime, hidden
+    cpu: ProcCpu, hidden
+    exe: ProcExe, hidden
+    cred: ProcCred, hidden
+    cred_name: ProcCredName, hidden
+    state: ProcState, hidden
     
 // Filesystem statistics
 enum FileSystemType::
@@ -110,16 +152,41 @@ enum FileSystemType::
     Swap,
     Max
     
+// File system usage
 struct FileSystem::
-    dir_name : string
-    dev_name : string
-    type_name : string
-    sys_type_name : string
-    options : string
-    type : FileSystemType
-    flags : int32
-    
-// Statistics that can be enabled on a host
+    dir_name: string
+    dev_name: string
+    type_name: string
+    sys_type_name: string
+    options: string
+    type: FileSystemType
+    flags: int32
+
+// Disk usage
+class DiskUsage::
+    reads: uint64
+    writes: uint64
+    write_bytes: uint64
+    read_bytes: uint64
+    rtime: uint64
+    wtime: uint64
+    qtime: uint64
+    time: uint64
+    snaptime: uint64
+    service_time: float64
+    queue: float64
+
+class FileSystemUsage::
+    disk: DiskUsage
+    use_percent: float64
+    total: uint64
+    free: uint64
+    used: uint64
+    avail: uint64
+    files: uint64
+    free_files: uint64
+
+// Statistics that can be enabled on a monitor
 bitmask Stats::
     Cpu,
     CpuList,
@@ -128,29 +195,40 @@ bitmask Stats::
     Swap,
     Uptime,
     LoadAvg,
-    ProcList,
+    ResourceLimit,
     ProcStat,
-    ProcMem, // Requires ProcList
-    ProcTime, // Requires ProcList
-    ProcCpu, // Requires ProcList
-    ProcExe, // Requires ProcList
-    FileSystemList
+    ProcList,
+    // -- Following constants requires ProcList
+    ProcMem, 
+    ProcTime,
+    ProcCpu,
+    ProcExe,
+    ProcCred,
+    ProcCredName,
+    ProcState,
+    // -- end
+    FileSystemList,
+    FileSystemUsage, // Requires FileSystemList
+    DiskUsage // Requires FileSystemUsage
 
-// Host class
+// Monitor class
 class Monitor::
-    stats : sys::Stats
-    cpu : CpuData, readonly
-    cpu_list : list{CpuData}, readonly
-    cpu_info : list{CpuInfo}, readonly
-    memory : MemoryData, readonly
-    swap : SwapData, readonly
-    uptime : sys::UptimeData, readonly
-    loadavg : sys::LoadAvgData, readonly
-    proc_list : list{Process}, readonly
-    proc_stat : ProcStatData, readonly
-    file_system_list : list{FileSystem}, readonly
-    handle : word, local | private
+    cpu: CpuData, readonly
+    cpu_list: list{CpuData}, readonly
+    cpu_info: list{CpuInfo}, readonly
+    memory: MemoryData, readonly
+    swap: SwapData, readonly
+    uptime: sys::UptimeData, readonly
+    loadavg: sys::LoadAvgData, readonly
+    resource_limit: sys::ResourceLimit, readonly
+    proc_list: list{Process}, readonly
+    proc_stat: ProcStatData, readonly
+    file_system_list: list{FileSystem}, readonly
+    disk_usage: DiskUsage, readonly
+    handle: word, local | private
     int16 construct()
     void destruct()
-    void refresh()
+    int16 refresh(sys::Stats stats)
+    int16 clear(sys::Stats stats)
+    int16 refreshProcList(string pattern)
     
