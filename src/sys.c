@@ -6,7 +6,7 @@
  * when the file is regenerated.
  */
 
-#include "sys.h"
+#include "corto/sys/sys.h"
 
 int sysMain(int argc, char* argv[]) {
 /* $begin(main) */

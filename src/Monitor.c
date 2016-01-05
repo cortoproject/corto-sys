@@ -1,16 +1,15 @@
 /* $CORTO_GENERATED
  *
- * sys_Monitor.c
+ * Monitor.c
  *
  * Only code written between the begin and end tags will be preserved
  * when the file is regenerated.
  */
 
-#include "sys.h"
+#include "corto/sys/sys.h"
 
 /* $header() */
 #include "sigar_lib.h"
-#include "corto.h"
 #include "fnmatch.h"
 
 static sys_Process sys_findProc(corto_ll list, sys_pid pid) {
@@ -416,7 +415,7 @@ corto_int16 _sys_Monitor_refresh(sys_Monitor this, sys_Stats stats) {
     if (stats & Sys_ProcStat) {
         sigar_proc_stat_t proc_stat;
         sigar_proc_stat_get((sigar_t*)this->handle, &proc_stat);
-        if (this->proc_stat) {
+        if (!this->proc_stat) {
             this->proc_stat = corto_create(sys_ProcStatData_o);
         }
         sys_ProcStatDataSet(this->proc_stat,
