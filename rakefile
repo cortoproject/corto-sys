@@ -1,5 +1,5 @@
 
-PACKAGE = 'corto::sys'
+PACKAGE = 'corto/sys'
 
 LINK = ["$(CORTO_ETC)/sigar"]
 
