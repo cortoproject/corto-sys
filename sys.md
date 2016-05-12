@@ -20,6 +20,17 @@
 ### total_sockets
 ### vendor
 
+## CpuPerc
+### combined
+### idle
+### irq
+### nice
+### soft_irq
+### stolen
+### sys
+### user
+### wait
+
 ## DiskUsage
 ### qtime
 ### queue
@@ -86,6 +97,7 @@
 ### cpu
 ### cpu_info
 ### cpu_list
+### cpu_perc
 ### destruct()
 ### disk_usage
 ### file_system_list
@@ -198,6 +210,7 @@
 ### Cpu
 ### CpuInfo
 ### CpuList
+### CpuPerc
 ### DiskUsage
 ### FileSystemList
 ### FileSystemUsage

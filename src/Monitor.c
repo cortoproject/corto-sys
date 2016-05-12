@@ -6,11 +6,13 @@
  * when the file is regenerated.
  */
 
-#include "corto/sys/sys.h"
+#include <corto/sys/sys.h>
 
 /* $header() */
 #include "sigar_lib.h"
+#include "sigar_format.h"
 #include "fnmatch.h"
+
 
 static sys_Process sys_findProc(corto_ll list, sys_pid pid) {
     sys_Process p;
@@ -92,7 +94,10 @@ static corto_int16 sys_refreshProcListPattern(sys_Monitor this, corto_string pat
 
 /* $end */
 
-corto_int16 _sys_Monitor_clear(sys_Monitor this, sys_Stats stats) {
+corto_int16 _sys_Monitor_clear(
+    sys_Monitor this,
+    sys_Stats stats)
+{
 /* $begin(corto/sys/Monitor/clear) */
 
     /* Lock object */
@@ -185,7 +190,9 @@ error:
 /* $end */
 }
 
-corto_int16 _sys_Monitor_construct(sys_Monitor this) {
+corto_int16 _sys_Monitor_construct(
+    sys_Monitor this)
+{
 /* $begin(corto/sys/Monitor/construct) */
     if (sigar_open((sigar_t**)&this->handle)) {
         corto_error("sys::Monitor::construct: failed to open sys handle.");
@@ -198,7 +205,9 @@ error:
 /* $end */
 }
 
-corto_void _sys_Monitor_destruct(sys_Monitor this) {
+corto_void _sys_Monitor_destruct(
+    sys_Monitor this)
+{
 /* $begin(corto/sys/Monitor/destruct) */
     if (sigar_close((sigar_t*)this->handle)) {
         corto_error("sys::Monitor::destruct: failed to close sys handle.");
@@ -206,7 +215,10 @@ corto_void _sys_Monitor_destruct(sys_Monitor this) {
 /* $end */
 }
 
-corto_int16 _sys_Monitor_refresh(sys_Monitor this, sys_Stats stats) {
+corto_int16 _sys_Monitor_refresh(
+    sys_Monitor this,
+    sys_Stats stats)
+{
 /* $begin(corto/sys/Monitor/refresh) */
     int status = 0;
 
@@ -269,6 +281,36 @@ corto_int16 _sys_Monitor_refresh(sys_Monitor this, sys_Stats stats) {
         if (!this->cpu) {
             this->cpu = corto_create(sys_CpuData_o);
         }
+        if (stats & Sys_CpuPerc){
+            sigar_cpu_t old = {
+                this->cpu->user,
+                this->cpu->sys,
+                this->cpu->nice,
+                this->cpu->idle,
+                this->cpu->wait,
+                this->cpu->irq,
+                this->cpu->soft_irq,
+                this->cpu->stolen,
+                this->cpu->total
+            };
+            sigar_cpu_perc_t cpu_perc;
+            sigar_cpu_perc_calculate(&old, &cpu, &cpu_perc);
+            if (!this->cpu_perc){
+                this->cpu_perc = corto_create(sys_CpuPerc_o);
+            }
+            sys_CpuPercSet(this->cpu_perc,
+                cpu_perc.user,
+                cpu_perc.sys,
+                cpu_perc.nice,
+                cpu_perc.idle,
+                cpu_perc.wait,
+                cpu_perc.irq,
+                cpu_perc.soft_irq,
+                cpu_perc.stolen,
+                cpu_perc.combined
+            );
+        }
+
 
         sys_CpuDataSet(this->cpu,
             cpu.user,
@@ -594,7 +636,10 @@ error:
 /* $end */
 }
 
-corto_int16 _sys_Monitor_refreshProcList(sys_Monitor this, corto_string pattern) {
+corto_int16 _sys_Monitor_refreshProcList(
+    sys_Monitor this,
+    corto_string pattern)
+{
 /* $begin(corto/sys/Monitor/refreshProcList) */
 
     return sys_refreshProcListPattern(this, pattern);
