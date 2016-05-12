@@ -129,7 +129,7 @@ corto_int16 _sys_Monitor_clear(
     if ((stats & Sys_Cpu) && this->cpu) {
         corto_setref(&this->cpu, NULL);
     }
-    / * Clear cpu_perc */
+    /* Clear cpu_perc */
     if ((stats & Sys_CpuPerc) && this->cpu_perc){
         corto_setref(this->cpu_perc, NULL);
     }
