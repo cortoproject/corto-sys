@@ -15,7 +15,7 @@ class CpuData::
     soft_irq: uint64
     stolen: uint64
     total: uint64
-    
+
 // CPU info
 class CpuInfo::
     vendor: string
@@ -24,8 +24,20 @@ class CpuInfo::
     cache_size: uint64
     total_sockets: uint32
     total_cores: uint32
-    cores_per_socket: uint32       
-    
+    cores_per_socket: uint32
+
+// CPU perc
+class CpuPerc::
+    user: float64
+    sys: float64
+    nice: float64
+    idle: float64
+    @wait: float64
+    irq: float64
+    soft_irq: float64
+    stolen: float64
+    combined: float64
+
 // Memory information
 class MemoryData::
     ram: uint64
@@ -36,7 +48,7 @@ class MemoryData::
     actual_free: uint64
     used_percent: float64
     free_percent: float64
-    
+
 // Swap information
 class SwapData::
     total: uint64
@@ -44,11 +56,11 @@ class SwapData::
     free: uint64
     page_in: uint64
     page_out: uint64
-    
+
 // Uptime
 class UptimeData::
     uptime: float64
-    
+
 // Load
 class LoadAvgData::
     loadavg: array{float64,3}
@@ -75,7 +87,7 @@ class ProcStatData::
     stopped: uint64
     idle: uint64
     threads: uint64
-    
+
 // Process memory statistics
 class ProcMem::
     size: uint64
@@ -84,14 +96,14 @@ class ProcMem::
     minor_faults: uint64
     major_faults: uint64
     page_faults: uint64
-    
+
 // Process time statistics
 class ProcTime::
     start_time: uint64
     user: uint64
     sys: uint64
     total: uint64
-    
+
 // Process cpu statistics
 class ProcCpu::
     start_time: uint64
@@ -140,7 +152,7 @@ class Process::
     cred: ProcCred, hidden
     cred_name: ProcCredName, hidden
     state: ProcState, hidden
-    
+
 // Filesystem statistics
 enum FileSystemType::
     Unknown,
@@ -151,7 +163,7 @@ enum FileSystemType::
     CdROM,
     Swap,
     Max
-    
+
 // File system usage
 struct FileSystem::
     dir_name: string
@@ -199,7 +211,7 @@ bitmask Stats::
     ProcStat,
     ProcList,
     // -- Following constants requires ProcList
-    ProcMem, 
+    ProcMem,
     ProcTime,
     ProcCpu,
     ProcExe,
@@ -209,11 +221,13 @@ bitmask Stats::
     // -- end
     FileSystemList,
     FileSystemUsage, // Requires FileSystemList
-    DiskUsage // Requires FileSystemUsage
+    DiskUsage, // Requires FileSystemUsage
+    CpuPerc   // Requires Cpu
 
 // Monitor class
 class Monitor::
     cpu: CpuData, readonly
+    cpu_perc: CpuPerc, readonly
     cpu_list: list{CpuData}, readonly
     cpu_info: list{CpuInfo}, readonly
     memory: MemoryData, readonly
@@ -231,4 +245,3 @@ class Monitor::
     int16 refresh(sys::Stats stats)
     int16 clear(sys::Stats stats)
     int16 refreshProcList(string pattern)
-    
