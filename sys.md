@@ -104,6 +104,9 @@
 ### handle
 ### loadavg
 ### memory
+### net_config
+### net_list
+### net_stat
 ### proc_list
 ### proc_stat
 ### refresh(/corto/sys/Stats stats)
@@ -115,6 +118,50 @@
 ### resource_limit
 ### swap
 ### uptime
+
+## NetAddress
+### addrin
+### addrin6
+### family
+### mac
+
+## NetFamily
+### Inet
+### Inet6
+### Link
+### Unspec
+
+## NetInterface
+### name
+
+## NetInterfaceConfig
+### address
+### broadcast
+### description
+### destination
+### flags
+### hwaddr
+### metric
+### mtu
+### name
+### netmask
+### type
+
+## NetInterfaceStat
+### rx_bytes
+### rx_dropped
+### rx_errors
+### rx_frame
+### rx_overruns
+### rx_packets
+### speed
+### tx_bytes
+### tx_carrier
+### tx_collisions
+### tx_dropped
+### tx_errors
+### tx_overruns
+### tx_packets
 
 ## pid
 
@@ -216,6 +263,9 @@
 ### FileSystemUsage
 ### LoadAvg
 ### Mem
+### NetConfig
+### NetList
+### NetStat
 ### ProcCpu
 ### ProcCred
 ### ProcCredName

@@ -165,7 +165,7 @@ enum FileSystemType::
     Max
 
 // File system usage
-struct FileSystem::
+class FileSystem::
     dir_name: string
     dev_name: string
     type_name: string
@@ -198,6 +198,57 @@ class FileSystemUsage::
     files: uint64
     free_files: uint64
 
+// Net address type
+enum NetFamily::
+    Unspec,
+    Inet,
+    Inet6,
+    Link
+
+// Net address
+class NetAddress::
+    family: NetFamily
+    addrin: uint32
+    addrin6: array{uint32,4}
+    mac: array{uint8,8}
+
+// Net Interface
+class NetInterface::
+    name: string
+
+// Net interfaces config
+class NetInterfaceConfig::
+    name: array{char,16}
+    type: array{char,64}
+    description: array{char,256}
+    hwaddr: NetAddress
+    address: NetAddress
+    destination: NetAddress
+    broadcast: NetAddress
+    netmask: NetAddress
+    flags: uint64
+    mtu: uint64
+    metric: uint64
+
+// Net interfaces Stat
+class NetInterfaceStat::
+// received
+    rx_packets: uint64
+    rx_bytes: uint64
+    rx_errors: uint64
+    rx_dropped: uint64
+    rx_overruns: uint64
+    rx_frame: uint64
+// transmitted
+    tx_packets: uint64
+    tx_bytes: uint64
+    tx_errors: uint64
+    tx_dropped: uint64
+    tx_overruns: uint64
+    tx_collisions: uint64
+    tx_carrier: uint64
+    speed: uint64
+
 // Statistics that can be enabled on a monitor
 bitmask Stats::
     Cpu,
@@ -222,7 +273,12 @@ bitmask Stats::
     FileSystemList,
     FileSystemUsage, // Requires FileSystemList
     DiskUsage, // Requires FileSystemUsage
-    CpuPerc   // Requires Cpu
+    CpuPerc,   // Requires Cpu
+    NetList,
+    NetStat,   // Requires NetList
+    NetConfig  // Requires NetList
+
+
 
 // Monitor class
 class Monitor::
@@ -239,6 +295,9 @@ class Monitor::
     proc_stat: ProcStatData, readonly
     file_system_list: list{FileSystem}, readonly
     disk_usage: DiskUsage, readonly
+    net_list: list{NetInterface}, readonly
+    net_stat: list{NetInterfaceStat}, readonly
+    net_config: list{NetInterfaceConfig}, readonly
     handle: word, local | private
     int16 construct()
     void destruct()

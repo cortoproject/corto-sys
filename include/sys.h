@@ -26,6 +26,10 @@ extern "C" {
 #include <corto/sys/LoadAvgData.h>
 #include <corto/sys/MemoryData.h>
 #include <corto/sys/Monitor.h>
+#include <corto/sys/NetAddress.h>
+#include <corto/sys/NetInterface.h>
+#include <corto/sys/NetInterfaceConfig.h>
+#include <corto/sys/NetInterfaceStat.h>
 #include <corto/sys/ProcCpu.h>
 #include <corto/sys/ProcCred.h>
 #include <corto/sys/ProcCredName.h>
