@@ -285,7 +285,7 @@ corto_int16 _sys_Monitor_refresh(
                 sigar_cpu_info_list_destroy((sigar_t*)this->handle, &cpu_info);
                 goto error;
             }
-            sys_CpuInfoSet(data,
+            sys_CpuInfoAssign(data,
                 cpu_info.data[i].vendor,
                 cpu_info.data[i].model,
                 cpu_info.data[i].mhz,
@@ -325,7 +325,7 @@ corto_int16 _sys_Monitor_refresh(
                 sigar_file_system_list_destroy((sigar_t*)this->handle, &file_sys);
                 goto error;
             }
-            sys_FileSystemSet(data,
+            sys_FileSystemAssign(data,
                 file_sys.data[i].dir_name,
                 file_sys.data[i].dev_name,
                 file_sys.data[i].type_name,
@@ -362,7 +362,7 @@ corto_int16 _sys_Monitor_refresh(
             if (!this->cpu_perc) {
                 this->cpu_perc = corto_create(sys_CpuPerc_o);
             }
-            sys_CpuPercSet(this->cpu_perc,
+            sys_CpuPercAssign(this->cpu_perc,
                 cpu_perc.user,
                 cpu_perc.sys,
                 cpu_perc.nice,
@@ -374,7 +374,7 @@ corto_int16 _sys_Monitor_refresh(
                 cpu_perc.combined
             );
         }
-        sys_CpuDataSet(this->cpu,
+        sys_CpuDataAssign(this->cpu,
             cpu.user,
             cpu.sys,
             cpu.nice,
@@ -415,7 +415,7 @@ corto_int16 _sys_Monitor_refresh(
                 goto error;
             }
 
-            sys_CpuDataSet(data,
+            sys_CpuDataAssign(data,
                 cpu_list.data[i].user,
                 cpu_list.data[i].sys,
                 cpu_list.data[i].nice,
@@ -438,7 +438,7 @@ corto_int16 _sys_Monitor_refresh(
             this->memory = corto_create(sys_MemoryData_o);
         }
 
-        sys_MemoryDataSet(this->memory,
+        sys_MemoryDataAssign(this->memory,
             mem.ram,
             mem.total,
             mem.used,
@@ -458,7 +458,7 @@ corto_int16 _sys_Monitor_refresh(
             this->swap = corto_create(sys_SwapData_o);
         }
 
-        sys_SwapDataSet(this->swap,
+        sys_SwapDataAssign(this->swap,
             swap.total,
             swap.used,
             swap.free,
@@ -494,7 +494,7 @@ corto_int16 _sys_Monitor_refresh(
         if (!this->resource_limit) {
             this->resource_limit = corto_create(sys_ResourceLimit_o);
         }
-        sys_ResourceLimitSet(this->resource_limit,
+        sys_ResourceLimitAssign(this->resource_limit,
             resourcelimit.cpu_cur,
             resourcelimit.cpu_max,
             resourcelimit.file_size_cur,
@@ -524,7 +524,7 @@ corto_int16 _sys_Monitor_refresh(
         if (!this->proc_stat) {
             this->proc_stat = corto_create(sys_ProcStatData_o);
         }
-        sys_ProcStatDataSet(this->proc_stat,
+        sys_ProcStatDataAssign(this->proc_stat,
             proc_stat.total,
             proc_stat.sleeping,
             proc_stat.running,
@@ -585,7 +585,7 @@ corto_int16 _sys_Monitor_refresh(
                 sigar_net_interface_list_destroy((sigar_t*)this->handle, &net_iflist);
                 goto error;
             }
-            sys_NetInterfaceSet(nl_data, net_iflist.data[i]);
+            sys_NetInterfaceAssign(nl_data, net_iflist.data[i]);
 
             if (stats & Sys_NetStat) {
                 sys_NetInterfaceStat ns_data;
@@ -600,7 +600,7 @@ corto_int16 _sys_Monitor_refresh(
                     sigar_net_interface_list_destroy((sigar_t*)this->handle, &net_iflist);
                     goto error;
                 }
-                sys_NetInterfaceStatSet(ns_data,
+                sys_NetInterfaceStatAssign(ns_data,
                     ifstat.rx_packets,
                     ifstat.rx_bytes,
                     ifstat.rx_errors,
@@ -650,7 +650,7 @@ corto_int16 _sys_Monitor_refresh(
                                                                     ifconfig.netmask.addr.in,
                                                                     ifconfig.netmask.addr.in6,
                                                                     ifconfig.netmask.addr.mac);
-                sys_NetInterfaceConfigSet(nc_data,
+                sys_NetInterfaceConfigAssign(nc_data,
                     ifconfig.name,
                     ifconfig.type,
                     ifconfig.description,
@@ -695,7 +695,7 @@ corto_int16 _sys_Monitor_refresh(
                     p->mem = corto_create(sys_ProcMem_o);
                 }
 
-                sys_ProcMemSet(p->mem,
+                sys_ProcMemAssign(p->mem,
                     proc_mem.size,
                     proc_mem.resident,
                     proc_mem.share,
@@ -715,7 +715,7 @@ corto_int16 _sys_Monitor_refresh(
                     p->time = corto_create(sys_ProcTime_o);
                 }
 
-                sys_ProcTimeSet(p->time,
+                sys_ProcTimeAssign(p->time,
                     proc_time.start_time,
                     proc_time.user,
                     proc_time.sys,
@@ -733,7 +733,7 @@ corto_int16 _sys_Monitor_refresh(
                     p->cpu = corto_create(sys_ProcCpu_o);
                 }
 
-                sys_ProcCpuSet(p->cpu,
+                sys_ProcCpuAssign(p->cpu,
                     proc_cpu.start_time,
                     proc_cpu.user,
                     proc_cpu.sys,
@@ -752,7 +752,7 @@ corto_int16 _sys_Monitor_refresh(
                 if ((status = sigar_proc_exe_get((sigar_t*)this->handle, p->pid, &proc_exe))) {
                     /* Silently ignore error - most likely a permission error. */
                 }else {
-                    sys_ProcExeSet(p->exe,
+                    sys_ProcExeAssign(p->exe,
                         proc_exe.name,
                         proc_exe.cwd,
                         proc_exe.root);
@@ -770,7 +770,7 @@ corto_int16 _sys_Monitor_refresh(
                     p->cred = corto_create(sys_ProcCred_o);
                 }
 
-                sys_ProcCredSet(p->cred,
+                sys_ProcCredAssign(p->cred,
                     proc_cred.uid,
                     proc_cred.gid,
                     proc_cred.euid,
@@ -788,7 +788,7 @@ corto_int16 _sys_Monitor_refresh(
                     p->cred_name = corto_create(sys_ProcCred_o);
                 }
 
-                sys_ProcCredNameSet(p->cred_name,
+                sys_ProcCredNameAssign(p->cred_name,
                     proc_cred_name.user,
                     proc_cred_name.group);
             }
@@ -804,7 +804,7 @@ corto_int16 _sys_Monitor_refresh(
                     p->state = corto_create(sys_ProcState_o);
                 }
 
-                sys_ProcStateSet(p->state,
+                sys_ProcStateAssign(p->state,
                     proc_state.name,
                     proc_state.state,
                     proc_state.ppid,
