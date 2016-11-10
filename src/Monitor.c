@@ -663,6 +663,11 @@ corto_int16 _sys_Monitor_refresh(
                     ifconfig.mtu,
                     ifconfig.metric
                 );
+                corto_release(hwaddr);
+                corto_release(address);
+                corto_release(destination);
+                corto_release(broadcast);
+                corto_release(netmask);
             }
         }
         sigar_net_interface_list_destroy((sigar_t*)this->handle, &net_iflist);
