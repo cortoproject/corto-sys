@@ -93,7 +93,7 @@ static corto_int16 sys_refreshProcListPattern(sys_Monitor this, corto_string pat
 
 /* $end */
 
-corto_int16 _sys_Monitor_clear(
+int16_t _sys_Monitor_clear(
     sys_Monitor this,
     sys_Stats stats)
 {
@@ -219,7 +219,7 @@ error:
 /* $end */
 }
 
-corto_int16 _sys_Monitor_construct(
+int16_t _sys_Monitor_construct(
     sys_Monitor this)
 {
 /* $begin(corto/sys/Monitor/construct) */
@@ -234,7 +234,7 @@ error:
 /* $end */
 }
 
-corto_void _sys_Monitor_destruct(
+void _sys_Monitor_destruct(
     sys_Monitor this)
 {
 /* $begin(corto/sys/Monitor/destruct) */
@@ -244,7 +244,7 @@ corto_void _sys_Monitor_destruct(
 /* $end */
 }
 
-corto_int16 _sys_Monitor_refresh(
+int16_t _sys_Monitor_refresh(
     sys_Monitor this,
     sys_Stats stats)
 {
@@ -839,7 +839,7 @@ error:
 /* $end */
 }
 
-corto_int16 _sys_Monitor_refreshProcList(
+int16_t _sys_Monitor_refreshProcList(
     sys_Monitor this,
     corto_string pattern)
 {
