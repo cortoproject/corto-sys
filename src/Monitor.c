@@ -22,8 +22,8 @@ static sys_Process sys_findProc(corto_ll list, sys_pid pid) {
 
     if (list) {
         iter = corto_llIter(list);
-        while (corto_iterHasNext(&iter)) {
-            p = corto_iterNext(&iter);
+        while (corto_iter_hasNext(&iter)) {
+            p = corto_iter_next(&iter);
             if (p->pid == pid) {
                 break;
             }else {
@@ -78,8 +78,8 @@ static corto_int16 sys_refreshProcListPattern(sys_Monitor this, corto_string pat
     /* Remove old processes */
     if (oldList) {
         iter = corto_llIter(oldList);
-        while (corto_iterHasNext(&iter)) {
-            p = corto_iterNext(&iter);
+        while (corto_iter_hasNext(&iter)) {
+            p = corto_iter_next(&iter);
             corto_release(p);
         }
         corto_llFree(oldList);
@@ -109,24 +109,24 @@ int16_t _sys_Monitor_clear(
     /* Clear Net info */
     if ((stats & Sys_NetList) && corto_llSize(this->net_list)) {
         corto_iter iter = corto_llIter(this->net_list);
-        while (corto_iterHasNext(&iter)) {
-            corto_delete(corto_iterNext(&iter));
+        while (corto_iter_hasNext(&iter)) {
+            corto_delete(corto_iter_next(&iter));
         }
         corto_llClear(this->net_list);
     }
 
     if ((stats & Sys_NetStat) && corto_llSize(this->net_stat)) {
         corto_iter iter = corto_llIter(this->net_stat);
-        while (corto_iterHasNext(&iter)) {
-            corto_delete(corto_iterNext(&iter));
+        while (corto_iter_hasNext(&iter)) {
+            corto_delete(corto_iter_next(&iter));
         }
         corto_llClear(this->net_stat);
     }
 
     if ((stats & Sys_NetConfig) && corto_llSize(this->net_config)) {
         corto_iter iter = corto_llIter(this->net_config);
-        while (corto_iterHasNext(&iter)) {
-            corto_delete(corto_iterNext(&iter));
+        while (corto_iter_hasNext(&iter)) {
+            corto_delete(corto_iter_next(&iter));
         }
         corto_llClear(this->net_config);
     }
@@ -134,8 +134,8 @@ int16_t _sys_Monitor_clear(
     /* Clear CPU info */
     if ((stats & Sys_CpuInfo) && corto_llSize(this->cpu_info)) {
         corto_iter iter = corto_llIter(this->cpu_info);
-        while (corto_iterHasNext(&iter)) {
-            corto_delete(corto_iterNext(&iter));
+        while (corto_iter_hasNext(&iter)) {
+            corto_delete(corto_iter_next(&iter));
         }
         corto_llClear(this->cpu_info);
     }
@@ -143,8 +143,8 @@ int16_t _sys_Monitor_clear(
     /* Clear file system list */
     if ((stats & Sys_FileSystemList) && corto_llSize(this->file_system_list)) {
         corto_iter iter = corto_llIter(this->file_system_list);
-        while (corto_iterHasNext(&iter)) {
-            corto_delete(corto_iterNext(&iter));
+        while (corto_iter_hasNext(&iter)) {
+            corto_delete(corto_iter_next(&iter));
         }
         corto_llClear(this->file_system_list);
     }
@@ -162,8 +162,8 @@ int16_t _sys_Monitor_clear(
     /* Clear cpu info */
     if ((stats & Sys_CpuList) && this->cpu_list) {
         corto_iter iter = corto_llIter(this->cpu_list);
-        while (corto_iterHasNext(&iter)) {
-            corto_delete(corto_iterNext(&iter));
+        while (corto_iter_hasNext(&iter)) {
+            corto_delete(corto_iter_next(&iter));
         }
         corto_llClear(this->cpu_list);
     }
@@ -201,8 +201,8 @@ int16_t _sys_Monitor_clear(
     /* Update process list */
     if ((stats & Sys_ProcList) && corto_llSize(this->proc_list)) {
         corto_iter iter = corto_llIter(this->proc_list);
-        while (corto_iterHasNext(&iter)) {
-            corto_delete(corto_iterNext(&iter));
+        while (corto_iter_hasNext(&iter)) {
+            corto_delete(corto_iter_next(&iter));
         }
         corto_llClear(this->proc_list);
     }
@@ -278,8 +278,8 @@ int16_t _sys_Monitor_refresh(
         iter = corto_llIter(this->cpu_info);
         for (i=0; i < cpu_info.number; i++) {
             sys_CpuInfo data;
-            if (corto_iterHasNext(&iter)) {
-                data = corto_iterNext(&iter);
+            if (corto_iter_hasNext(&iter)) {
+                data = corto_iter_next(&iter);
             } else {
                 corto_seterr("inconsistent number of cpu's (%d vs %d)", i, cpu_info.number);
                 sigar_cpu_info_list_destroy((sigar_t*)this->handle, &cpu_info);
@@ -318,8 +318,8 @@ int16_t _sys_Monitor_refresh(
         iter = corto_llIter(this->file_system_list);
         for(i=0; i < file_sys.number; i++) {
             sys_FileSystem data;
-            if (corto_iterHasNext(&iter)) {
-                data = corto_iterNext(&iter);
+            if (corto_iter_hasNext(&iter)) {
+                data = corto_iter_next(&iter);
             } else {
                 corto_seterr("inconsistent number of cpu's (%d vs %d)", i, file_sys.number);
                 sigar_file_system_list_destroy((sigar_t*)this->handle, &file_sys);
@@ -407,8 +407,8 @@ int16_t _sys_Monitor_refresh(
         iter = corto_llIter(this->cpu_list);
         for(i=0; i < cpu_list.number; i++) {
             sys_CpuData data;
-            if (corto_iterHasNext(&iter)) {
-                data = corto_iterNext(&iter);
+            if (corto_iter_hasNext(&iter)) {
+                data = corto_iter_next(&iter);
             } else {
                 corto_seterr("inconsistent number of cpu's (%d vs %d)", i, cpu_list.number);
                 sigar_cpu_list_destroy((sigar_t*)this->handle, &cpu_list);
@@ -578,8 +578,8 @@ int16_t _sys_Monitor_refresh(
         nl_iter = corto_llIter(this->net_list);
         for (i = 0; i < net_iflist.number; i++) {
             sys_NetInterface nl_data;
-            if (corto_iterHasNext(&nl_iter)) {
-                nl_data = corto_iterNext(&nl_iter);
+            if (corto_iter_hasNext(&nl_iter)) {
+                nl_data = corto_iter_next(&nl_iter);
             } else {
                 corto_seterr("inconsistent number of net interfaces's (%d vs %d)", i, net_iflist.number);
                 sigar_net_interface_list_destroy((sigar_t*)this->handle, &net_iflist);
@@ -593,8 +593,8 @@ int16_t _sys_Monitor_refresh(
                 char *ifname = net_iflist.data[i];
                 sigar_net_interface_stat_get((sigar_t*)this->handle, ifname, &ifstat);
 
-                if (corto_iterHasNext(&ns_iter)) {
-                    ns_data = corto_iterNext(&ns_iter);
+                if (corto_iter_hasNext(&ns_iter)) {
+                    ns_data = corto_iter_next(&ns_iter);
                 } else {
                     corto_seterr("inconsistent number of net interfaces 's (%d vs %d)", i, net_iflist.number);
                     sigar_net_interface_list_destroy((sigar_t*)this->handle, &net_iflist);
@@ -623,8 +623,8 @@ int16_t _sys_Monitor_refresh(
                 char *ifname = net_iflist.data[i];
                 sigar_net_interface_config_get((sigar_t*)this->handle, ifname, &ifconfig);
 
-                if (corto_iterHasNext(&nc_iter)) {
-                    nc_data = corto_iterNext(&nc_iter);
+                if (corto_iter_hasNext(&nc_iter)) {
+                    nc_data = corto_iter_next(&nc_iter);
                 } else {
                     corto_seterr("inconsistent number of net interfaces's (%d vs %d)", i, net_iflist.number);
                     sigar_net_interface_list_destroy((sigar_t*)this->handle, &net_iflist);
@@ -686,8 +686,8 @@ int16_t _sys_Monitor_refresh(
         sys_Process p;
 
         iter = corto_llIter(this->proc_list);
-        while (corto_iterHasNext(&iter)) {
-            p = corto_iterNext(&iter);
+        while (corto_iter_hasNext(&iter)) {
+            p = corto_iter_next(&iter);
 
             if (stats & Sys_ProcMem) {
                 sigar_proc_mem_t proc_mem;

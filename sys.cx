@@ -1,11 +1,11 @@
-#package ::corto::sys
+#package /corto/sys
 
 int pid{width_64} // Process id
 int uid{width_32} // User id
 int gid{width_32} // Group id
 
 // CPU statistics
-class CpuData::
+class CpuData:/
     user: uint64
     sys: uint64
     nice: uint64
@@ -17,7 +17,7 @@ class CpuData::
     total: uint64
 
 // CPU info
-class CpuInfo::
+class CpuInfo:/
     vendor: string
     model: string
     mhz: uint32
@@ -27,7 +27,7 @@ class CpuInfo::
     cores_per_socket: uint32
 
 // CPU perc
-class CpuPerc::
+class CpuPerc:/
     user: float64
     sys: float64
     nice: float64
@@ -39,7 +39,7 @@ class CpuPerc::
     combined: float64
 
 // Memory information
-class MemoryData::
+class MemoryData:/
     ram: uint64
     total: uint64
     used: uint64
@@ -50,7 +50,7 @@ class MemoryData::
     free_percent: float64
 
 // Swap information
-class SwapData::
+class SwapData:/
     total: uint64
     used: uint64
     free: uint64
@@ -58,15 +58,15 @@ class SwapData::
     page_out: uint64
 
 // Uptime
-class UptimeData::
+class UptimeData:/
     uptime: float64
 
 // Load
-class LoadAvgData::
+class LoadAvgData:/
     loadavg: array{float64,3}
 
 // Resource limits
-class ResourceLimit::
+class ResourceLimit:/
     cpu_cur, cpu_max: uint64
     file_size_cur, file_size_max: uint64
     pipe_size_cur, pipe_size_max: uint64
@@ -79,7 +79,7 @@ class ResourceLimit::
     virtual_memory_cur, virtual_memory_max: uint64
 
 // Overall process statistics
-class ProcStatData::
+class ProcStatData:/
     total: uint64
     sleeping: uint64
     running: uint64
@@ -89,7 +89,7 @@ class ProcStatData::
     threads: uint64
 
 // Process memory statistics
-class ProcMem::
+class ProcMem:/
     size: uint64
     resident: uint64
     share: uint64
@@ -98,14 +98,14 @@ class ProcMem::
     page_faults: uint64
 
 // Process time statistics
-class ProcTime::
+class ProcTime:/
     start_time: uint64
     user: uint64
     sys: uint64
     total: uint64
 
 // Process cpu statistics
-class ProcCpu::
+class ProcCpu:/
     start_time: uint64
     user: uint64
     sys: uint64
@@ -114,28 +114,28 @@ class ProcCpu::
     percent: float64
 
 // Process command statistics
-class ProcExe::
+class ProcExe:/
     name: string
     cwd: string
     root: string
 
 // Process credential statistics
-class ProcCred::
-    uid: sys::uid
-    gid: sys::gid
-    euid: sys::uid
-    egid: sys::gid
+class ProcCred:/
+    uid: sys/uid
+    gid: sys/gid
+    euid: sys/uid
+    egid: sys/gid
 
 // Credential name information
-class ProcCredName::
+class ProcCredName:/
     user: string
     group: string
 
 // Process state information
-class ProcState::
+class ProcState:/
     name: string
     state: char
-    ppid: sys::pid
+    ppid: sys/pid
     tty: int32
     priority: int32
     nice: int32
@@ -143,8 +143,8 @@ class ProcState::
     threads: uint64
 
 // Process statistics
-class Process::
-    pid: sys::pid
+class Process:/
+    pid: sys/pid
     mem: ProcMem, hidden
     time: ProcTime, hidden
     cpu: ProcCpu, hidden
@@ -154,7 +154,7 @@ class Process::
     state: ProcState, hidden
 
 // Filesystem statistics
-enum FileSystemType::
+enum FileSystemType:/
     Unknown,
     None,
     LocalDisk,
@@ -165,7 +165,7 @@ enum FileSystemType::
     Max
 
 // File system usage
-class FileSystem::
+class FileSystem:/
     dir_name: string
     dev_name: string
     type_name: string
@@ -175,7 +175,7 @@ class FileSystem::
     flags: int32
 
 // Disk usage
-class DiskUsage::
+class DiskUsage:/
     reads: uint64
     writes: uint64
     write_bytes: uint64
@@ -188,7 +188,7 @@ class DiskUsage::
     service_time: float64
     queue: float64
 
-class FileSystemUsage::
+class FileSystemUsage:/
     disk: DiskUsage
     use_percent: float64
     total: uint64
@@ -199,25 +199,25 @@ class FileSystemUsage::
     free_files: uint64
 
 // Net address type
-enum NetFamily::
+enum NetFamily:/
     Unspec,
     Inet,
     Inet6,
     Link
 
 // Net address
-class NetAddress::
+class NetAddress:/
     family: NetFamily
     addrin: uint32
     addrin6: array{uint32,4}
     mac: array{uint8,8}
 
 // Net Interface
-class NetInterface::
+class NetInterface:/
     name: string
 
 // Net interfaces config
-class NetInterfaceConfig::
+class NetInterfaceConfig:/
     name: array{char,16}
     type: array{char,64}
     description: array{char,256}
@@ -231,7 +231,7 @@ class NetInterfaceConfig::
     metric: uint64
 
 // Net interfaces Stat
-class NetInterfaceStat::
+class NetInterfaceStat:/
 // received
     rx_packets: uint64
     rx_bytes: uint64
@@ -250,7 +250,7 @@ class NetInterfaceStat::
     speed: uint64
 
 // Statistics that can be enabled on a monitor
-bitmask Stats::
+bitmask Stats:/
     Cpu,
     CpuList,
     CpuInfo,
@@ -281,16 +281,16 @@ bitmask Stats::
 
 
 // Monitor class
-class Monitor::
+class Monitor:/
     cpu: CpuData, readonly
     cpu_perc: CpuPerc, readonly
     cpu_list: list{CpuData}, readonly
     cpu_info: list{CpuInfo}, readonly
     memory: MemoryData, readonly
     swap: SwapData, readonly
-    uptime: sys::UptimeData, readonly
-    loadavg: sys::LoadAvgData, readonly
-    resource_limit: sys::ResourceLimit, readonly
+    uptime: sys/UptimeData, readonly
+    loadavg: sys/LoadAvgData, readonly
+    resource_limit: sys/ResourceLimit, readonly
     proc_list: list{Process}, readonly
     proc_stat: ProcStatData, readonly
     file_system_list: list{FileSystem}, readonly
@@ -301,6 +301,6 @@ class Monitor::
     handle: word, local | private
     int16 construct()
     void destruct()
-    int16 refresh(sys::Stats stats)
-    int16 clear(sys::Stats stats)
+    int16 refresh(sys/Stats stats)
+    int16 clear(sys/Stats stats)
     int16 refreshProcList(string pattern)
