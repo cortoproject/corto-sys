@@ -21,7 +21,7 @@ static sys_Process sys_findProc(corto_ll list, sys_pid pid) {
     p = NULL;
 
     if (list) {
-        iter = corto_llIter(list);
+        iter = corto_ll_iter(list);
         while (corto_iter_hasNext(&iter)) {
             p = corto_iter_next(&iter);
             if (p->pid == pid) {
@@ -44,7 +44,7 @@ static corto_int16 sys_refreshProcListPattern(sys_Monitor this, corto_string pat
     /* Obtain process-list */
     sigar_proc_list_get((sigar_t*)this->handle, &proc_list);
     oldList = this->proc_list;
-    this->proc_list = corto_llNew();
+    this->proc_list = corto_ll_new();
 
     /* Add processes to list */
     for (i = 0; i < proc_list.number; i++) {
@@ -68,21 +68,21 @@ static corto_int16 sys_refreshProcListPattern(sys_Monitor this, corto_string pat
         }else {
             /* Remove process from oldlist, so it won't get removed in cleaning up lost processes */
             if (oldList) {
-                corto_llRemove(oldList, p);
+                corto_ll_remove(oldList, p);
             }
         }
         /* Insert process in list */
-        corto_llInsert(this->proc_list, p);
+        corto_ll_insert(this->proc_list, p);
     }
 
     /* Remove old processes */
     if (oldList) {
-        iter = corto_llIter(oldList);
+        iter = corto_ll_iter(oldList);
         while (corto_iter_hasNext(&iter)) {
             p = corto_iter_next(&iter);
             corto_release(p);
         }
-        corto_llFree(oldList);
+        corto_ll_free(oldList);
     }
 
     /* Cleanup list */
@@ -107,104 +107,104 @@ int16_t _sys_Monitor_clear(
     }
 
     /* Clear Net info */
-    if ((stats & Sys_NetList) && corto_llSize(this->net_list)) {
-        corto_iter iter = corto_llIter(this->net_list);
+    if ((stats & Sys_NetList) && corto_ll_size(this->net_list)) {
+        corto_iter iter = corto_ll_iter(this->net_list);
         while (corto_iter_hasNext(&iter)) {
             corto_delete(corto_iter_next(&iter));
         }
-        corto_llClear(this->net_list);
+        corto_ll_clear(this->net_list);
     }
 
-    if ((stats & Sys_NetStat) && corto_llSize(this->net_stat)) {
-        corto_iter iter = corto_llIter(this->net_stat);
+    if ((stats & Sys_NetStat) && corto_ll_size(this->net_stat)) {
+        corto_iter iter = corto_ll_iter(this->net_stat);
         while (corto_iter_hasNext(&iter)) {
             corto_delete(corto_iter_next(&iter));
         }
-        corto_llClear(this->net_stat);
+        corto_ll_clear(this->net_stat);
     }
 
-    if ((stats & Sys_NetConfig) && corto_llSize(this->net_config)) {
-        corto_iter iter = corto_llIter(this->net_config);
+    if ((stats & Sys_NetConfig) && corto_ll_size(this->net_config)) {
+        corto_iter iter = corto_ll_iter(this->net_config);
         while (corto_iter_hasNext(&iter)) {
             corto_delete(corto_iter_next(&iter));
         }
-        corto_llClear(this->net_config);
+        corto_ll_clear(this->net_config);
     }
 
     /* Clear CPU info */
-    if ((stats & Sys_CpuInfo) && corto_llSize(this->cpu_info)) {
-        corto_iter iter = corto_llIter(this->cpu_info);
+    if ((stats & Sys_CpuInfo) && corto_ll_size(this->cpu_info)) {
+        corto_iter iter = corto_ll_iter(this->cpu_info);
         while (corto_iter_hasNext(&iter)) {
             corto_delete(corto_iter_next(&iter));
         }
-        corto_llClear(this->cpu_info);
+        corto_ll_clear(this->cpu_info);
     }
 
     /* Clear file system list */
-    if ((stats & Sys_FileSystemList) && corto_llSize(this->file_system_list)) {
-        corto_iter iter = corto_llIter(this->file_system_list);
+    if ((stats & Sys_FileSystemList) && corto_ll_size(this->file_system_list)) {
+        corto_iter iter = corto_ll_iter(this->file_system_list);
         while (corto_iter_hasNext(&iter)) {
             corto_delete(corto_iter_next(&iter));
         }
-        corto_llClear(this->file_system_list);
+        corto_ll_clear(this->file_system_list);
     }
 
     /* Clear cpu */
     if ((stats & Sys_Cpu) && this->cpu) {
-        corto_setref(&this->cpu, NULL);
+        corto_ptr_setref(&this->cpu, NULL);
     }
 
     /* Clear cpu_perc */
     if ((stats & Sys_CpuPerc) && this->cpu_perc) {
-        corto_setref(&this->cpu_perc, NULL);
+        corto_ptr_setref(&this->cpu_perc, NULL);
     }
 
     /* Clear cpu info */
     if ((stats & Sys_CpuList) && this->cpu_list) {
-        corto_iter iter = corto_llIter(this->cpu_list);
+        corto_iter iter = corto_ll_iter(this->cpu_list);
         while (corto_iter_hasNext(&iter)) {
             corto_delete(corto_iter_next(&iter));
         }
-        corto_llClear(this->cpu_list);
+        corto_ll_clear(this->cpu_list);
     }
 
     /* Clear mem */
     if (stats & Sys_Mem) {
-        corto_setref(&this->memory, NULL);
+        corto_ptr_setref(&this->memory, NULL);
     }
 
     /* Clear swap */
     if (stats & Sys_Swap) {
-        corto_setref(&this->swap, NULL);
+        corto_ptr_setref(&this->swap, NULL);
     }
 
     /* Clear uptime */
     if (stats & Sys_Uptime) {
-        corto_setref(&this->uptime, NULL);
+        corto_ptr_setref(&this->uptime, NULL);
     }
 
     /* Clear loadavg */
     if (stats & Sys_LoadAvg) {
-        corto_setref(&this->loadavg, NULL);
+        corto_ptr_setref(&this->loadavg, NULL);
     }
 
     /* Clear resource limits */
     if (stats & Sys_ResourceLimit) {
-        corto_setref(&this->resource_limit, NULL);
+        corto_ptr_setref(&this->resource_limit, NULL);
     }
 
     /* Update proc statistics */
     if (stats & Sys_ProcStat) {
-        corto_setref(&this->proc_stat, NULL);
+        corto_ptr_setref(&this->proc_stat, NULL);
     }
 
     /* Update process list */
-    if ((stats & Sys_ProcList) && corto_llSize(this->proc_list)) {
-        corto_iter iter = corto_llIter(this->proc_list);
+    if ((stats & Sys_ProcList) && corto_ll_size(this->proc_list)) {
+        corto_iter iter = corto_ll_iter(this->proc_list);
         while (corto_iter_hasNext(&iter)) {
             corto_delete(corto_iter_next(&iter));
         }
-        corto_llClear(this->proc_list);
+        corto_ll_clear(this->proc_list);
     }
 
     /* Notify observers */
@@ -267,15 +267,15 @@ int16_t _sys_Monitor_refresh(
         sigar_cpu_info_list_get((sigar_t*)this->handle, &cpu_info);
 
         /* If list did not exist, create it along with memory */
-        if (!corto_llSize(this->cpu_info)) {
+        if (!corto_ll_size(this->cpu_info)) {
             sys_CpuInfo* data;
-            this->cpu_info = corto_llNew();
+            this->cpu_info = corto_ll_new();
             for (i=0; i<cpu_info.number; i++) {
                 data = corto_create(sys_CpuInfo_o);
-                corto_llInsert(this->cpu_info, data);
+                corto_ll_insert(this->cpu_info, data);
             }
         }
-        iter = corto_llIter(this->cpu_info);
+        iter = corto_ll_iter(this->cpu_info);
         for (i=0; i < cpu_info.number; i++) {
             sys_CpuInfo data;
             if (corto_iter_hasNext(&iter)) {
@@ -307,15 +307,15 @@ int16_t _sys_Monitor_refresh(
         sigar_file_system_list_get((sigar_t*)this->handle, &file_sys);
 
         /* If list did not exist, create it along with memory */
-        if (!corto_llSize(this->file_system_list)) {
+        if (!corto_ll_size(this->file_system_list)) {
             sys_FileSystem* data;
-            this->file_system_list = corto_llNew();
+            this->file_system_list = corto_ll_new();
             for (i=0; i<file_sys.number; i++) {
                 data = corto_create(sys_FileSystem_o);
-                corto_llInsert(this->file_system_list, data);
+                corto_ll_insert(this->file_system_list, data);
             }
         }
-        iter = corto_llIter(this->file_system_list);
+        iter = corto_ll_iter(this->file_system_list);
         for(i=0; i < file_sys.number; i++) {
             sys_FileSystem data;
             if (corto_iter_hasNext(&iter)) {
@@ -394,17 +394,17 @@ int16_t _sys_Monitor_refresh(
         sigar_cpu_list_get((sigar_t*)this->handle, &cpu_list);
 
         /* If list did not exist, create it along with memory */
-        if (!corto_llSize(this->cpu_list)) {
+        if (!corto_ll_size(this->cpu_list)) {
             corto_uint32 i;
             sys_CpuData* data;
-            this->cpu_list = corto_llNew();
+            this->cpu_list = corto_ll_new();
             for (i=0; i<cpu_list.number; i++) {
                 data = corto_create(sys_CpuData_o);
-                corto_llInsert(this->cpu_list, data);
+                corto_ll_insert(this->cpu_list, data);
             }
         }
 
-        iter = corto_llIter(this->cpu_list);
+        iter = corto_ll_iter(this->cpu_list);
         for(i=0; i < cpu_list.number; i++) {
             sys_CpuData data;
             if (corto_iter_hasNext(&iter)) {
@@ -545,37 +545,37 @@ int16_t _sys_Monitor_refresh(
         sigar_net_interface_list_get((sigar_t*)this->handle, &net_iflist);
 
         /* If list did not exist, create it along with memory */
-        if (!corto_llSize(this->net_list)) {
+        if (!corto_ll_size(this->net_list)) {
             sys_NetInterface *data;
-            this->net_list = corto_llNew();
+            this->net_list = corto_ll_new();
             for (i=0; i<net_iflist.number; i++) {
                 data = corto_create(sys_NetInterface_o);
-                corto_llInsert(this->net_list,data);
+                corto_ll_insert(this->net_list,data);
             }
         }
         if (stats & Sys_NetStat) {
-            if (!corto_llSize(this->net_stat)) {
+            if (!corto_ll_size(this->net_stat)) {
                 sys_NetInterfaceStat *data;
-                this->net_stat = corto_llNew();
+                this->net_stat = corto_ll_new();
                 for (i=0; i<net_iflist.number;i++) {
                     data = corto_create(sys_NetInterfaceStat_o);
-                    corto_llInsert(this->net_stat, data);
+                    corto_ll_insert(this->net_stat, data);
                 }
             }
-            ns_iter = corto_llIter(this->net_stat);
+            ns_iter = corto_ll_iter(this->net_stat);
         }
         if (stats & Sys_NetConfig) {
-            if (!corto_llSize(this->net_config)) {
+            if (!corto_ll_size(this->net_config)) {
                 sys_NetInterfaceConfig *data;
-                this->net_config = corto_llNew();
+                this->net_config = corto_ll_new();
                 for (i=0; i<net_iflist.number;i++) {
                     data = corto_create(sys_NetInterfaceConfig_o);
-                    corto_llInsert(this->net_config, data);
+                    corto_ll_insert(this->net_config, data);
                 }
             }
-            nc_iter = corto_llIter(this->net_config);
+            nc_iter = corto_ll_iter(this->net_config);
         }
-        nl_iter = corto_llIter(this->net_list);
+        nl_iter = corto_ll_iter(this->net_list);
         for (i = 0; i < net_iflist.number; i++) {
             sys_NetInterface nl_data;
             if (corto_iter_hasNext(&nl_iter)) {
@@ -685,7 +685,7 @@ int16_t _sys_Monitor_refresh(
         corto_iter iter;
         sys_Process p;
 
-        iter = corto_llIter(this->proc_list);
+        iter = corto_ll_iter(this->proc_list);
         while (corto_iter_hasNext(&iter)) {
             p = corto_iter_next(&iter);
 
