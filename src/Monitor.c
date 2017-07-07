@@ -1,14 +1,7 @@
-/* $CORTO_GENERATED
- *
- * Monitor.c
- *
- * Only code written between the begin and end tags will be preserved
- * when the file is regenerated.
- */
+/* This is a managed file. Do not delete this comment. */
 
 #include <corto/sys/sys.h>
 
-/* $header() */
 #include "sigar_lib.h"
 #include "sigar_format.h"
 #include "fnmatch.h"
@@ -91,13 +84,11 @@ static corto_int16 sys_refreshProcListPattern(sys_Monitor this, corto_string pat
     return 0;
 }
 
-/* $end */
 
-int16_t _sys_Monitor_clear(
+int16_t sys_Monitor_clear(
     sys_Monitor this,
     sys_Stats stats)
 {
-/* $begin(corto/sys/Monitor/clear) */
 
     /* Lock object */
     if (corto_checkAttr(this, CORTO_ATTR_OBSERVABLE)) {
@@ -216,13 +207,11 @@ int16_t _sys_Monitor_clear(
 error:
     corto_seterr("sys: failed to clear: %s", corto_lasterr());
     return -1;
-/* $end */
 }
 
-int16_t _sys_Monitor_construct(
+int16_t sys_Monitor_construct(
     sys_Monitor this)
 {
-/* $begin(corto/sys/Monitor/construct) */
     if (sigar_open((sigar_t**)&this->handle)) {
         corto_error("sys::Monitor::construct: failed to open sys handle.");
         goto error;
@@ -231,24 +220,20 @@ int16_t _sys_Monitor_construct(
     return 0;
 error:
     return -1;
-/* $end */
 }
 
-void _sys_Monitor_destruct(
+void sys_Monitor_destruct(
     sys_Monitor this)
 {
-/* $begin(corto/sys/Monitor/destruct) */
     if (sigar_close((sigar_t*)this->handle)) {
         corto_error("sys::Monitor::destruct: failed to close sys handle.");
     }
-/* $end */
 }
 
-int16_t _sys_Monitor_refresh(
+int16_t sys_Monitor_refresh(
     sys_Monitor this,
     sys_Stats stats)
 {
-/* $begin(corto/sys/Monitor/refresh) */
     int status = 0;
 
     /* Lock object */
@@ -836,16 +821,14 @@ int16_t _sys_Monitor_refresh(
 error:
     corto_error("sys: failed to refresh: %s", corto_lasterr());
     return -1;
-/* $end */
 }
 
-int16_t _sys_Monitor_refreshProcList(
+int16_t sys_Monitor_refreshProcList(
     sys_Monitor this,
     corto_string pattern)
 {
-/* $begin(corto/sys/Monitor/refreshProcList) */
 
     return sys_refreshProcListPattern(this, pattern);
 
-/* $end */
 }
+
