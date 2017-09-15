@@ -92,7 +92,7 @@ int16_t sys_Monitor_clear(
 
     /* Lock object */
     if (corto_checkAttr(this, CORTO_ATTR_OBSERVABLE)) {
-        if (corto_updateBegin(this)) {
+        if (corto_update_begin(this)) {
             goto error;
         }
     }
@@ -200,7 +200,7 @@ int16_t sys_Monitor_clear(
 
     /* Notify observers */
     if (corto_checkAttr(this, CORTO_ATTR_OBSERVABLE)) {
-        corto_updateEnd(this);
+        corto_update_end(this);
     }
 
     return 0;
@@ -239,7 +239,7 @@ int16_t sys_Monitor_refresh(
     /* Lock object */
     /* Notify observers */
     if (corto_checkAttr(this, CORTO_ATTR_OBSERVABLE)) {
-        if (corto_updateBegin(this)) {
+        if (corto_update_begin(this)) {
             goto error;
         }
     }
@@ -814,7 +814,7 @@ int16_t sys_Monitor_refresh(
 
     /* Notify observers */
     if (corto_checkAttr(this, CORTO_ATTR_OBSERVABLE)) {
-        corto_updateEnd(this);
+        corto_update_end(this);
     }
 
     return 0;

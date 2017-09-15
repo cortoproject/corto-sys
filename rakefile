@@ -1,6 +1,0 @@
-
-PACKAGE = 'corto/sys'
-
-LINK = ["$(CORTO_ETC)/sigar"]
-
-require "#{ENV['CORTO_BUILD']}/package"

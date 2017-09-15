@@ -1,0 +1,10 @@
+{
+    "id": "corto/sys",
+    "type": "package",
+    "value": {
+        "author": "Sander Mertens, Roberto Flores",
+        "version": "1.0.0",
+        "description": "HTTP server abstraction",
+        "link": ["$(CORTO_ETC)/sigar"]
+    }
+}
