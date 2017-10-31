@@ -92,7 +92,7 @@ int16_t sys_Monitor_clear(
 
     /* Lock object */
     if (corto_checkAttr(this, CORTO_ATTR_OBSERVABLE)) {
-        if (corto_update_begin(this)) {
+        if (corto_updateBegin(this)) {
             goto error;
         }
     }
@@ -200,7 +200,10 @@ int16_t sys_Monitor_clear(
 
     /* Notify observers */
     if (corto_checkAttr(this, CORTO_ATTR_OBSERVABLE)) {
-        corto_update_end(this);
+        if (corto_updateEnd(this)) {
+            corto_seterr("updateEnd failed. Error: %s", corto_lasterr());
+            goto error;
+        }
     }
 
     return 0;
@@ -239,7 +242,8 @@ int16_t sys_Monitor_refresh(
     /* Lock object */
     /* Notify observers */
     if (corto_checkAttr(this, CORTO_ATTR_OBSERVABLE)) {
-        if (corto_update_begin(this)) {
+        if (corto_updateBegin(this)) {
+            corto_seterr("Update begin failed. Error: %s", corto_lasterr());
             goto error;
         }
     }
@@ -661,6 +665,7 @@ int16_t sys_Monitor_refresh(
     /* Update process list */
     if (stats & Sys_ProcList) {
         if (sys_refreshProcListPattern(this, NULL)) {
+            corto_seterr("Failed to refresh proc list pattern.");
             goto error;
         }
     }
@@ -814,12 +819,20 @@ int16_t sys_Monitor_refresh(
 
     /* Notify observers */
     if (corto_checkAttr(this, CORTO_ATTR_OBSERVABLE)) {
-        corto_update_end(this);
+        if (corto_updateEnd(this)) {
+            corto_seterr("updateEnd failed. Error: %s", corto_lasterr());
+            goto error;
+        }
     }
 
     return 0;
 error:
     corto_error("sys: failed to refresh: %s", corto_lasterr());
+    if (corto_checkAttr(this, CORTO_ATTR_OBSERVABLE)) {
+        if (corto_updateCancel(this)) {
+            corto_error("UpdateCancel failed. Error: %s", corto_lasterr());
+        }
+    }
     return -1;
 }
 
@@ -831,4 +844,3 @@ int16_t sys_Monitor_refreshProcList(
     return sys_refreshProcListPattern(this, pattern);
 
 }
-
