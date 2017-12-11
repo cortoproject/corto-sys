@@ -5,6 +5,6 @@
         "author": "Sander Mertens, Roberto Flores",
         "version": "1.0.0",
         "description": "HTTP server abstraction",
-        "link": ["$(CORTO_ETC)/sigar"]
+        "link": ["$(PROJECT_ETC)/sigar"]
     }
 }
