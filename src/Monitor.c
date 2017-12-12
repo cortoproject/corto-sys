@@ -98,7 +98,7 @@ int16_t sys_Monitor_clear(
     }
 
     /* Clear Net info */
-    if ((stats & Sys_NetList) && corto_ll_size(this->net_list)) {
+    if ((stats & Sys_NetList) && corto_ll_count(this->net_list)) {
         corto_iter iter = corto_ll_iter(this->net_list);
         while (corto_iter_hasNext(&iter)) {
             corto_delete(corto_iter_next(&iter));
@@ -106,7 +106,7 @@ int16_t sys_Monitor_clear(
         corto_ll_clear(this->net_list);
     }
 
-    if ((stats & Sys_NetStat) && corto_ll_size(this->net_stat)) {
+    if ((stats & Sys_NetStat) && corto_ll_count(this->net_stat)) {
         corto_iter iter = corto_ll_iter(this->net_stat);
         while (corto_iter_hasNext(&iter)) {
             corto_delete(corto_iter_next(&iter));
@@ -114,7 +114,7 @@ int16_t sys_Monitor_clear(
         corto_ll_clear(this->net_stat);
     }
 
-    if ((stats & Sys_NetConfig) && corto_ll_size(this->net_config)) {
+    if ((stats & Sys_NetConfig) && corto_ll_count(this->net_config)) {
         corto_iter iter = corto_ll_iter(this->net_config);
         while (corto_iter_hasNext(&iter)) {
             corto_delete(corto_iter_next(&iter));
@@ -123,7 +123,7 @@ int16_t sys_Monitor_clear(
     }
 
     /* Clear CPU info */
-    if ((stats & Sys_CpuInfo) && corto_ll_size(this->cpu_info)) {
+    if ((stats & Sys_CpuInfo) && corto_ll_count(this->cpu_info)) {
         corto_iter iter = corto_ll_iter(this->cpu_info);
         while (corto_iter_hasNext(&iter)) {
             corto_delete(corto_iter_next(&iter));
@@ -132,7 +132,7 @@ int16_t sys_Monitor_clear(
     }
 
     /* Clear file system list */
-    if ((stats & Sys_FileSystemList) && corto_ll_size(this->file_system_list)) {
+    if ((stats & Sys_FileSystemList) && corto_ll_count(this->file_system_list)) {
         corto_iter iter = corto_ll_iter(this->file_system_list);
         while (corto_iter_hasNext(&iter)) {
             corto_delete(corto_iter_next(&iter));
@@ -190,7 +190,7 @@ int16_t sys_Monitor_clear(
     }
 
     /* Update process list */
-    if ((stats & Sys_ProcList) && corto_ll_size(this->proc_list)) {
+    if ((stats & Sys_ProcList) && corto_ll_count(this->proc_list)) {
         corto_iter iter = corto_ll_iter(this->proc_list);
         while (corto_iter_hasNext(&iter)) {
             corto_delete(corto_iter_next(&iter));
@@ -201,14 +201,14 @@ int16_t sys_Monitor_clear(
     /* Notify observers */
     if (corto_checkAttr(this, CORTO_ATTR_OBSERVABLE)) {
         if (corto_updateEnd(this)) {
-            corto_seterr("updateEnd failed. Error: %s", corto_lasterr());
+            corto_throw("Sys Monitor updateEnd failed.");
             goto error;
         }
     }
 
     return 0;
 error:
-    corto_seterr("sys: failed to clear: %s", corto_lasterr());
+    corto_throw("sys: failed to clear");
     return -1;
 }
 
@@ -243,7 +243,7 @@ int16_t sys_Monitor_refresh(
     /* Notify observers */
     if (corto_checkAttr(this, CORTO_ATTR_OBSERVABLE)) {
         if (corto_updateBegin(this)) {
-            corto_seterr("Update begin failed. Error: %s", corto_lasterr());
+            corto_throw("Sys Monitor Refresh Update begin failed.");
             goto error;
         }
     }
@@ -256,7 +256,7 @@ int16_t sys_Monitor_refresh(
         sigar_cpu_info_list_get((sigar_t*)this->handle, &cpu_info);
 
         /* If list did not exist, create it along with memory */
-        if (!corto_ll_size(this->cpu_info)) {
+        if (!corto_ll_count(this->cpu_info)) {
             sys_CpuInfo* data;
             this->cpu_info = corto_ll_new();
             for (i=0; i<cpu_info.number; i++) {
@@ -270,7 +270,8 @@ int16_t sys_Monitor_refresh(
             if (corto_iter_hasNext(&iter)) {
                 data = corto_iter_next(&iter);
             } else {
-                corto_seterr("inconsistent number of cpu's (%d vs %d)", i, cpu_info.number);
+                corto_throw("inconsistent number of cpu's (%d vs %d)",
+                    i, cpu_info.number);
                 sigar_cpu_info_list_destroy((sigar_t*)this->handle, &cpu_info);
                 goto error;
             }
@@ -296,7 +297,7 @@ int16_t sys_Monitor_refresh(
         sigar_file_system_list_get((sigar_t*)this->handle, &file_sys);
 
         /* If list did not exist, create it along with memory */
-        if (!corto_ll_size(this->file_system_list)) {
+        if (!corto_ll_count(this->file_system_list)) {
             sys_FileSystem* data;
             this->file_system_list = corto_ll_new();
             for (i=0; i<file_sys.number; i++) {
@@ -310,7 +311,8 @@ int16_t sys_Monitor_refresh(
             if (corto_iter_hasNext(&iter)) {
                 data = corto_iter_next(&iter);
             } else {
-                corto_seterr("inconsistent number of cpu's (%d vs %d)", i, file_sys.number);
+                corto_throw("inconsistent number of cpu's (%d vs %d)",
+                    i, file_sys.number);
                 sigar_file_system_list_destroy((sigar_t*)this->handle, &file_sys);
                 goto error;
             }
@@ -383,7 +385,7 @@ int16_t sys_Monitor_refresh(
         sigar_cpu_list_get((sigar_t*)this->handle, &cpu_list);
 
         /* If list did not exist, create it along with memory */
-        if (!corto_ll_size(this->cpu_list)) {
+        if (!corto_ll_count(this->cpu_list)) {
             corto_uint32 i;
             sys_CpuData* data;
             this->cpu_list = corto_ll_new();
@@ -399,7 +401,8 @@ int16_t sys_Monitor_refresh(
             if (corto_iter_hasNext(&iter)) {
                 data = corto_iter_next(&iter);
             } else {
-                corto_seterr("inconsistent number of cpu's (%d vs %d)", i, cpu_list.number);
+                corto_throw("inconsistent number of cpu's (%d vs %d)",
+                    i, cpu_list.number);
                 sigar_cpu_list_destroy((sigar_t*)this->handle, &cpu_list);
                 goto error;
             }
@@ -534,7 +537,7 @@ int16_t sys_Monitor_refresh(
         sigar_net_interface_list_get((sigar_t*)this->handle, &net_iflist);
 
         /* If list did not exist, create it along with memory */
-        if (!corto_ll_size(this->net_list)) {
+        if (!corto_ll_count(this->net_list)) {
             sys_NetInterface *data;
             this->net_list = corto_ll_new();
             for (i=0; i<net_iflist.number; i++) {
@@ -543,7 +546,7 @@ int16_t sys_Monitor_refresh(
             }
         }
         if (stats & Sys_NetStat) {
-            if (!corto_ll_size(this->net_stat)) {
+            if (!corto_ll_count(this->net_stat)) {
                 sys_NetInterfaceStat *data;
                 this->net_stat = corto_ll_new();
                 for (i=0; i<net_iflist.number;i++) {
@@ -554,7 +557,7 @@ int16_t sys_Monitor_refresh(
             ns_iter = corto_ll_iter(this->net_stat);
         }
         if (stats & Sys_NetConfig) {
-            if (!corto_ll_size(this->net_config)) {
+            if (!corto_ll_count(this->net_config)) {
                 sys_NetInterfaceConfig *data;
                 this->net_config = corto_ll_new();
                 for (i=0; i<net_iflist.number;i++) {
@@ -570,7 +573,8 @@ int16_t sys_Monitor_refresh(
             if (corto_iter_hasNext(&nl_iter)) {
                 nl_data = corto_iter_next(&nl_iter);
             } else {
-                corto_seterr("inconsistent number of net interfaces's (%d vs %d)", i, net_iflist.number);
+                corto_throw("inconsistent number of net interfaces's (%d vs %d)",
+                    i, net_iflist.number);
                 sigar_net_interface_list_destroy((sigar_t*)this->handle, &net_iflist);
                 goto error;
             }
@@ -585,7 +589,8 @@ int16_t sys_Monitor_refresh(
                 if (corto_iter_hasNext(&ns_iter)) {
                     ns_data = corto_iter_next(&ns_iter);
                 } else {
-                    corto_seterr("inconsistent number of net interfaces 's (%d vs %d)", i, net_iflist.number);
+                    corto_throw("inconsistent number of net interfaces 's (%d vs %d)",
+                        i, net_iflist.number);
                     sigar_net_interface_list_destroy((sigar_t*)this->handle, &net_iflist);
                     goto error;
                 }
@@ -615,7 +620,8 @@ int16_t sys_Monitor_refresh(
                 if (corto_iter_hasNext(&nc_iter)) {
                     nc_data = corto_iter_next(&nc_iter);
                 } else {
-                    corto_seterr("inconsistent number of net interfaces's (%d vs %d)", i, net_iflist.number);
+                    corto_throw("inconsistent number of net interfaces's (%d vs %d)",
+                        i, net_iflist.number);
                     sigar_net_interface_list_destroy((sigar_t*)this->handle, &net_iflist);
                     goto error;
                 }
@@ -665,7 +671,7 @@ int16_t sys_Monitor_refresh(
     /* Update process list */
     if (stats & Sys_ProcList) {
         if (sys_refreshProcListPattern(this, NULL)) {
-            corto_seterr("Failed to refresh proc list pattern.");
+            corto_throw("Failed to refresh proc list pattern.");
             goto error;
         }
     }
@@ -682,7 +688,8 @@ int16_t sys_Monitor_refresh(
             if (stats & Sys_ProcMem) {
                 sigar_proc_mem_t proc_mem;
                 if (sigar_proc_mem_get((sigar_t*)this->handle, p->pid, &proc_mem)) {
-                    corto_seterr("failed to obtain process-memory statistics for pid %d", p->pid);
+                    corto_throw("failed to obtain process-memory statistics for pid %d",
+                        p->pid);
                     goto error;
                 }
 
@@ -702,7 +709,8 @@ int16_t sys_Monitor_refresh(
             if (stats & Sys_ProcTime) {
                 sigar_proc_time_t proc_time;
                 if (sigar_proc_time_get((sigar_t*)this->handle, p->pid, &proc_time)) {
-                    corto_seterr("failed to obtain process-time statistics for pid %d", p->pid);
+                    corto_throw("failed to obtain process-time statistics for pid %d",
+                        p->pid);
                     goto error;
                 }
 
@@ -720,7 +728,8 @@ int16_t sys_Monitor_refresh(
             if (stats & Sys_ProcCpu) {
                 sigar_proc_cpu_t proc_cpu;
                 if (sigar_proc_cpu_get((sigar_t*)this->handle, p->pid, &proc_cpu)) {
-                    corto_seterr("failed to obtain process-cpu statistics for pid %d", p->pid);
+                    corto_throw("failed to obtain process-cpu statistics for pid %d",
+                        p->pid);
                     goto error;
                 }
 
@@ -757,7 +766,8 @@ int16_t sys_Monitor_refresh(
             if (stats & Sys_ProcCred) {
                 sigar_proc_cred_t proc_cred;
                 if (sigar_proc_cred_get((sigar_t*)this->handle, p->pid, &proc_cred)) {
-                    corto_seterr("failed to obtain process credential information for %d", p->pid);
+                    corto_throw("failed to obtain process credential information for %d",
+                        p->pid);
                     goto error;
                 }
 
@@ -775,7 +785,8 @@ int16_t sys_Monitor_refresh(
             if (stats & Sys_ProcCredName) {
                 sigar_proc_cred_name_t proc_cred_name;
                 if (sigar_proc_cred_name_get((sigar_t*)this->handle, p->pid, &proc_cred_name)) {
-                    corto_seterr("failed to obtain process credential name information for %d", p->pid);
+                    corto_throw("failed to obtain process credential name information for %d",
+                        p->pid);
                     goto error;
                 }
 
@@ -791,7 +802,8 @@ int16_t sys_Monitor_refresh(
             if (stats & Sys_ProcState) {
                 sigar_proc_state_t proc_state;
                 if (sigar_proc_state_get((sigar_t*)this->handle, p->pid, &proc_state)) {
-                    corto_seterr("failed to obtain process state information for %d", p->pid);
+                    corto_throw("failed to obtain process state information for %d",
+                        p->pid);
                     goto error;
                 }
 
@@ -812,7 +824,7 @@ int16_t sys_Monitor_refresh(
         }
     } else {
         if (stats & (Sys_ProcMem | Sys_ProcTime | Sys_ProcCpu | Sys_ProcExe)) {
-            corto_seterr("ProcMem, ProcTime, ProcCpu and/or ProcExe enabled without ProcList.");
+            corto_throw("ProcMem, ProcTime, ProcCpu and/or ProcExe enabled without ProcList.");
             goto error;
         }
     }
@@ -820,17 +832,17 @@ int16_t sys_Monitor_refresh(
     /* Notify observers */
     if (corto_checkAttr(this, CORTO_ATTR_OBSERVABLE)) {
         if (corto_updateEnd(this)) {
-            corto_seterr("updateEnd failed. Error: %s", corto_lasterr());
+            corto_throw("Sys Monitor refresh updateEnd failed.");
             goto error;
         }
     }
 
     return 0;
 error:
-    corto_error("sys: failed to refresh: %s", corto_lasterr());
+    corto_throw("sys: failed to refresh.");
     if (corto_checkAttr(this, CORTO_ATTR_OBSERVABLE)) {
         if (corto_updateCancel(this)) {
-            corto_error("UpdateCancel failed. Error: %s", corto_lasterr());
+            corto_throw("Sys UpdateCancel failed.");
         }
     }
     return -1;
