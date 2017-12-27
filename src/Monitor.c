@@ -25,7 +25,7 @@ static sys_Process sys_findProc(corto_ll list, sys_pid pid) {
     return p;
 }
 
-static corto_int16 sys_refreshProcListPattern(sys_Monitor this, corto_string pattern) {
+static corto_int16 sys_refreshProcListPattern(sys_Monitor this, const char *pattern) {
     sigar_proc_list_t proc_list;
     corto_ll oldList;
     corto_uint32 i;
