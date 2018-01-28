@@ -303,4 +303,4 @@ class Monitor:/
     void destruct()
     int16 refresh(sys/Stats stats)
     int16 clear(sys/Stats stats)
-    int16 refreshProcList(string pattern)
+    int16 refresh_proc_list(string pattern)

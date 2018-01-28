@@ -55,7 +55,7 @@ static corto_int16 sys_refreshProcListPattern(sys_Monitor this, const char *patt
         /* Find process in list */
         p = sys_findProc(oldList, proc_list.data[i]);
         if (!p) {
-            p = sys_ProcessCreate(proc_list.data[i]);
+            p = sys_Process__create(NULL, NULL, proc_list.data[i]);
         }else {
             /* Remove process from oldlist, so it won't get removed in cleaning up lost processes */
             if (oldList) {
@@ -287,7 +287,7 @@ int16_t sys_Monitor_refresh(
                 goto error;
             }
 
-            sys_CpuInfoAssign(data,
+            sys_CpuInfo__assign(data,
                 cpu_info.data[i].vendor,
                 cpu_info.data[i].model,
                 cpu_info.data[i].mhz,
@@ -330,7 +330,7 @@ int16_t sys_Monitor_refresh(
                 goto error;
             }
 
-            sys_FileSystemAssign(data,
+            sys_FileSystem__assign(data,
                 file_sys.data[i].dir_name,
                 file_sys.data[i].dev_name,
                 file_sys.data[i].type_name,
@@ -370,7 +370,7 @@ int16_t sys_Monitor_refresh(
                 this->cpu_perc = corto_create(NULL, NULL, sys_CpuPerc_o);
             }
 
-            sys_CpuPercAssign(this->cpu_perc,
+            sys_CpuPerc__assign(this->cpu_perc,
                 cpu_perc.user,
                 cpu_perc.sys,
                 cpu_perc.nice,
@@ -383,7 +383,7 @@ int16_t sys_Monitor_refresh(
             );
         }
 
-        sys_CpuDataAssign(this->cpu,
+        sys_CpuData__assign(this->cpu,
             cpu.user,
             cpu.sys,
             cpu.nice,
@@ -425,7 +425,7 @@ int16_t sys_Monitor_refresh(
                 goto error;
             }
 
-            sys_CpuDataAssign(data,
+            sys_CpuData__assign(data,
                 cpu_list.data[i].user,
                 cpu_list.data[i].sys,
                 cpu_list.data[i].nice,
@@ -448,7 +448,7 @@ int16_t sys_Monitor_refresh(
             this->memory = corto_create(NULL, NULL, sys_MemoryData_o);
         }
 
-        sys_MemoryDataAssign(this->memory,
+        sys_MemoryData__assign(this->memory,
             mem.ram,
             mem.total,
             mem.used,
@@ -467,7 +467,7 @@ int16_t sys_Monitor_refresh(
             this->swap = corto_create(NULL, NULL, sys_SwapData_o);
         }
 
-        sys_SwapDataAssign(this->swap,
+        sys_SwapData__assign(this->swap,
             swap.total,
             swap.used,
             swap.free,
@@ -506,7 +506,7 @@ int16_t sys_Monitor_refresh(
             this->resource_limit = corto_create(NULL, NULL, sys_ResourceLimit_o);
         }
 
-        sys_ResourceLimitAssign(this->resource_limit,
+        sys_ResourceLimit__assign(this->resource_limit,
             resourcelimit.cpu_cur,
             resourcelimit.cpu_max,
             resourcelimit.file_size_cur,
@@ -537,7 +537,7 @@ int16_t sys_Monitor_refresh(
             this->proc_stat = corto_create(NULL, NULL, sys_ProcStatData_o);
         }
 
-        sys_ProcStatDataAssign(this->proc_stat,
+        sys_ProcStatData__assign(this->proc_stat,
             proc_stat.total,
             proc_stat.sleeping,
             proc_stat.running,
@@ -606,7 +606,7 @@ int16_t sys_Monitor_refresh(
                 goto error;
             }
 
-            sys_NetInterfaceAssign(nl_data, net_iflist.data[i]);
+            sys_NetInterface__assign(nl_data, net_iflist.data[i]);
             if (stats & Sys_NetStat) {
                 sys_NetInterfaceStat ns_data;
                 sigar_net_interface_stat_t ifstat;
@@ -621,7 +621,7 @@ int16_t sys_Monitor_refresh(
                     goto error;
                 }
 
-                sys_NetInterfaceStatAssign(ns_data,
+                sys_NetInterfaceStat__assign(ns_data,
                     ifstat.rx_packets,
                     ifstat.rx_bytes,
                     ifstat.rx_errors,
@@ -653,27 +653,43 @@ int16_t sys_Monitor_refresh(
                     goto error;
                 }
 
-                sys_NetAddress hwaddr = sys_NetAddressCreate((sys_NetFamily)ifconfig.hwaddr.family,
-                                                                    ifconfig.hwaddr.addr.in,
-                                                                    ifconfig.hwaddr.addr.in6,
-                                                                    ifconfig.hwaddr.addr.mac);
-                sys_NetAddress address = sys_NetAddressCreate((sys_NetFamily)ifconfig.address.family,
-                                                                    ifconfig.address.addr.in,
-                                                                    ifconfig.address.addr.in6,
-                                                                    ifconfig.address.addr.mac);
-                sys_NetAddress destination = sys_NetAddressCreate((sys_NetFamily)ifconfig.destination.family,
-                                                                    ifconfig.destination.addr.in,
-                                                                    ifconfig.destination.addr.in6,
-                                                                    ifconfig.destination.addr.mac);
-                sys_NetAddress broadcast = sys_NetAddressCreate((sys_NetFamily)ifconfig.broadcast.family,
-                                                                    ifconfig.broadcast.addr.in,
-                                                                    ifconfig.broadcast.addr.in6,
-                                                                    ifconfig.broadcast.addr.mac);
-                sys_NetAddress netmask = sys_NetAddressCreate((sys_NetFamily)ifconfig.netmask.family,
-                                                                    ifconfig.netmask.addr.in,
-                                                                    ifconfig.netmask.addr.in6,
-                                                                    ifconfig.netmask.addr.mac);
-                sys_NetInterfaceConfigAssign(nc_data,
+                sys_NetAddress hwaddr = sys_NetAddress__create(
+                    NULL,
+                    NULL,
+                    (sys_NetFamily)ifconfig.hwaddr.family,
+                    ifconfig.hwaddr.addr.in,
+                    ifconfig.hwaddr.addr.in6,
+                    ifconfig.hwaddr.addr.mac);
+                sys_NetAddress address = sys_NetAddress__create(
+                    NULL,
+                    NULL,
+                    (sys_NetFamily)ifconfig.address.family,
+                    ifconfig.address.addr.in,
+                    ifconfig.address.addr.in6,
+                    ifconfig.address.addr.mac);
+                sys_NetAddress destination = sys_NetAddress__create(
+                    NULL,
+                    NULL,
+                    (sys_NetFamily)ifconfig.destination.family,
+                    ifconfig.destination.addr.in,
+                    ifconfig.destination.addr.in6,
+                    ifconfig.destination.addr.mac);
+                sys_NetAddress broadcast = sys_NetAddress__create(
+                    NULL,
+                    NULL,
+                    (sys_NetFamily)ifconfig.broadcast.family,
+                    ifconfig.broadcast.addr.in,
+                    ifconfig.broadcast.addr.in6,
+                    ifconfig.broadcast.addr.mac);
+                sys_NetAddress netmask = sys_NetAddress__create(
+                    NULL,
+                    NULL,
+                    (sys_NetFamily)ifconfig.netmask.family,
+                    ifconfig.netmask.addr.in,
+                    ifconfig.netmask.addr.in6,
+                    ifconfig.netmask.addr.mac);
+                sys_NetInterfaceConfig__assign(
+                    nc_data,
                     ifconfig.name,
                     ifconfig.type,
                     ifconfig.description,
@@ -726,7 +742,7 @@ int16_t sys_Monitor_refresh(
                     p->mem = corto_create(NULL, NULL, sys_ProcMem_o);
                 }
 
-                sys_ProcMemAssign(p->mem,
+                sys_ProcMem__assign(p->mem,
                     proc_mem.size,
                     proc_mem.resident,
                     proc_mem.share,
@@ -747,7 +763,7 @@ int16_t sys_Monitor_refresh(
                     p->time = corto_create(NULL, NULL, sys_ProcTime_o);
                 }
 
-                sys_ProcTimeAssign(p->time,
+                sys_ProcTime__assign(p->time,
                     proc_time.start_time,
                     proc_time.user,
                     proc_time.sys,
@@ -766,7 +782,7 @@ int16_t sys_Monitor_refresh(
                     p->cpu = corto_create(NULL, NULL, sys_ProcCpu_o);
                 }
 
-                sys_ProcCpuAssign(p->cpu,
+                sys_ProcCpu__assign(p->cpu,
                     proc_cpu.start_time,
                     proc_cpu.user,
                     proc_cpu.sys,
@@ -784,7 +800,7 @@ int16_t sys_Monitor_refresh(
                 if ((status = sigar_proc_exe_get((sigar_t*)this->handle, p->pid, &proc_exe))) {
                     /* Silently ignore error - most likely a permission error. */
                 }else {
-                    sys_ProcExeAssign(p->exe,
+                    sys_ProcExe__assign(p->exe,
                         proc_exe.name,
                         proc_exe.cwd,
                         proc_exe.root);
@@ -804,7 +820,7 @@ int16_t sys_Monitor_refresh(
                     p->cred = corto_create(NULL, NULL, sys_ProcCred_o);
                 }
 
-                sys_ProcCredAssign(p->cred,
+                sys_ProcCred__assign(p->cred,
                     proc_cred.uid,
                     proc_cred.gid,
                     proc_cred.euid,
@@ -823,7 +839,7 @@ int16_t sys_Monitor_refresh(
                     p->cred_name = corto_create(NULL, NULL, sys_ProcCred_o);
                 }
 
-                sys_ProcCredNameAssign(p->cred_name,
+                sys_ProcCredName__assign(p->cred_name,
                     proc_cred_name.user,
                     proc_cred_name.group);
             }
@@ -840,7 +856,7 @@ int16_t sys_Monitor_refresh(
                     p->state = corto_create(NULL, NULL, sys_ProcState_o);
                 }
 
-                sys_ProcStateAssign(p->state,
+                sys_ProcState__assign(p->state,
                     proc_state.name,
                     proc_state.state,
                     proc_state.ppid,
@@ -883,11 +899,9 @@ error:
     return -1;
 }
 
-int16_t sys_Monitor_refreshProcList(
+int16_t sys_Monitor_refresh_proc_list(
     sys_Monitor this,
     const char *pattern)
 {
-
     return sys_refreshProcListPattern(this, pattern);
-
 }
